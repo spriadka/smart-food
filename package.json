@@ -1,0 +1,28 @@
+{
+  "name": "smart-food",
+  "version": "1.0.0",
+  "description": "Smart food management system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spriadka/smart-food.git"
+  },
+  "keywords": [
+    "smart",
+    "food",
+    "nutrition",
+    "cloud"
+  ],
+  "author": "spriadka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spriadka/smart-food/issues"
+  },
+  "homepage": "https://github.com/spriadka/smart-food#readme",
+  "dependencies": {
+    "lerna": "^3.13.4"
+  }
+}
