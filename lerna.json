@@ -1,6 +1,7 @@
 {
   "packages": [
-    "mobile-app"
+    "mobile-app",
+    "backend"
   ],
   "version": "0.0.0"
 }
