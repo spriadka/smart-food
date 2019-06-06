@@ -1,0 +1,5 @@
+*.log
+node_modules
+node_modules_linux
+vars.yaml
+vcap-local.json

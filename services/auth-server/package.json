@@ -1,0 +1,27 @@
+{
+  "name": "smart-food-auth-server",
+  "version": "1.0.0",
+  "description": "Smart Food auth server that uses AppID for mobile authentication",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "AppID",
+    "authentication"
+  ],
+  "author": "spriadka",
+  "license": "ISC",
+  "dependencies": {
+    "@cloudnative/health-connect": "^2.0.0",
+    "appmetrics-prometheus": "^2.0.0",
+    "cfenv": "^1.2.2",
+    "es7-object-polyfill": "^1.0.0",
+    "express": "^4.17.0",
+    "express-session": "^1.16.1",
+    "ibmcloud-appid": "^6.0.0",
+    "log4js": "^4.2.0",
+    "passport": "^0.4.0"
+  }
+}
