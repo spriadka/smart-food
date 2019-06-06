@@ -1,6 +1,6 @@
-## authserver
+# Authserver
 
-Basic Web project with ExpressJS on NodeJS
+## Authorization server combining IBM AppID and Expo
 
 [![](https://img.shields.io/badge/IBM%20Cloud-powered-blue.svg)](https://bluemix.net)
 ![Platform](https://img.shields.io/badge/platform-NODE-lightgrey.svg?style=flat)
@@ -17,14 +17,15 @@ Basic Web project with ExpressJS on NodeJS
 ### IBM Cloud Enablement
 
 <a name="requirements"></a>
-### Requirements
+
+### Development Requirements
 #### Local Development Tools Setup (optional)
 
 - Install the latest [NodeJS](https://nodejs.org/en/download/) 6+ LTS version.
 
 #### IBM Cloud development tools setup (optional)
 
-1. Install [IBM Cloud Developer Tools](https://console.bluemix.net/docs/cli/idt/setting_up_idt.html#add-cli) on your machine  
+1. Install [IBM Cloud Developer Tools](https://console.bluemix.net/docs/cli/idt/setting_up_idt.html#add-cli) on your machine
 2. Install the plugin with: `bx plugin install dev -r bluemix`
 
 
@@ -32,7 +33,7 @@ Basic Web project with ExpressJS on NodeJS
 
 [![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)
 
-[IBM Cloud DevOps](https://www.ibm.com/cloud-computing/bluemix/devops) services provides toolchains as a set of tool integrations that support development, deployment, and operations tasks inside IBM Cloud. The "Create Toolchain" button creates a DevOps toolchain and acts as a single-click deploy to IBM Cloud including provisioning all required services. 
+[IBM Cloud DevOps](https://www.ibm.com/cloud-computing/bluemix/devops) services provides toolchains as a set of tool integrations that support development, deployment, and operations tasks inside IBM Cloud. The "Create Toolchain" button creates a DevOps toolchain and acts as a single-click deploy to IBM Cloud including provisioning all required services.
 
 ***Note** you must publish your project to [Github](https://github.com/) for this to work.
 
@@ -73,8 +74,19 @@ memory, and will not scale past a single process.
 ```
 When deploying to production, it is best practice to configure sessions to be stored in an external persistence service.
 
+#### Required services
+
+This application depends on a working instance of IBM AppID. To run locally a `VCAP JSON` file and enable it in `index.js` e.g by:
+
+```
+require('cfenv).getAppEnv({
+  vcapFile: path_to_your_vcap_file
+});
+```
+
 
 <a name="debug"></a>
+
 ### Debug
 
 #### Using IBM Cloud development CLI
