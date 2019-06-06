@@ -1,0 +1,14 @@
+applications:
+- buildpack: sdk-for-nodejs
+  command: npm start
+  domain: null
+  host: null
+  instances: 1
+  memory: 256M
+  name: authserver
+  health-check-type: process
+  routes:
+  - route: auth-server.eu-gb.cf.appdomain.cloud
+  timeout: 180
+  env:
+    REDIRECT_URL: ((REDIRECT_URL))
