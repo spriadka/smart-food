@@ -1,0 +1,14 @@
+{
+  "name": "smartfood-sample-data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "spriadka",
+  "license": "MIT",
+  "dependencies": {
+    "smartfood-model": "file:../model"
+  }
+}
