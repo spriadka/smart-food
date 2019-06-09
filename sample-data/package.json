@@ -9,6 +9,7 @@
   "author": "spriadka",
   "license": "MIT",
   "dependencies": {
+    "@cloudant/cloudant": "^4.1.0",
     "smartfood-model": "file:../model"
   }
 }
