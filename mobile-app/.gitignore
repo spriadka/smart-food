@@ -1,4 +1,6 @@
 node_modules/**/*
+!node_modules/bmd-push-react-native
+!node_modules/react-native-camera-kit
 .expo/*
 npm-debug.*
 *.jks
