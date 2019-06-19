@@ -1,188 +1,197 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  AsyncStorage,
+  ListView
 } from 'react-native';
-import { WebBrowser } from 'expo';
 
-import { MonoText } from '../components/StyledText';
+import { Push } from 'bmd-push-react-native';
+
+import { DeviceEventEmitter } from 'react-native';
+
+import Config from '../config';
+
+import {
+  Container,
+  Header,
+  Content,
+  List,
+  ListItem,
+  Text,
+  Button,
+  Icon,
+  Left,
+  Right,
+  Thumbnail,
+  Body,
+  Title } from 'native-base';
+
+import Moment from 'moment';
+
+import axios from 'axios'
 
 export default class HomeScreen extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      data: [],
+      userInfo: {}
+     };
+    pushInit = async () => {
+      let initMessage = await Push.init({
+        "appGUID":Config.PUSH.APP_GUID,
+        "clientSecret":Config.PUSH.CLIENT_SECRET,
+        "region":Config.PUSH.REGION
+      });
+    };
+    pushRegister = async () => {
+      let userInfo = JSON.parse(await AsyncStorage.getItem("userInfo"))
+      let registerMessage = await Push.register({
+        userId: userInfo.email
+      });
+      alert(registerMessage);
+    }
+    pushInit().then(() => pushRegister());
+
+    DeviceEventEmitter.addListener("onPushReceived", function(notification: Event) {
+      alert(notification.message);
+    }.bind(this));
+
+    Push.registerNotificationsCallback("onPushReceived");
+    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+  };
+
   static navigationOptions = {
     header: null,
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
-            />
-          </View>
-
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
-            </View>
-
-            <Text style={styles.getStartedText}>
-              Martin!
-            </Text>
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
-        </View>
-      </View>
-    );
+  _deleteRow(secId, rowId, rowMap) {
+    rowMap[`${secId}${rowId}`].props.closeRow();
+    const newData = [...this.state.data];
+    newData.splice(rowId, 1);
+    this.setState({ data: newData });
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+  async componentDidMount() {
+    let userInfo = await AsyncStorage.getItem('userInfo');
+    this.setState({userInfo: JSON.parse(userInfo)});
+    try {
+      let response = await axios.post(Config.CLOUD_FUNCTIONS.CLOUDANT_FIND_URL,
+      {
+          "CLOUDANT_URL": Config.CLOUDANT.CLOUDANT_URL,
+          "CLOUDANT_USERNAME": Config.CLOUDANT.CLOUDANT_USERNAME,
+          "IAM_API_KEY": Config.CLOUDANT.IAM_API_KEY,
+          "DATABASE_NAME":"sample-data",
+          "QUERY": {
+              "selector": {
+                  "user_email": Config.CLOUDANT.USER_EMAIL
+              },
+              "sort": [{
+                  "data.name:string": "asc"
+              }]
+          }
+      });
+      this.setState({data: response.data.docs});
+      this.fetchNotifications();
+    } catch (err) {
+        throw err;
     }
   }
 
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
+  fetchNotifications = async () => {
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
+    const DateDiff = {
+
+      inDays: function(d1, d2) {
+          var t2 = d2.getTime();
+          var t1 = d1.getTime();
+
+          return parseInt((t2-t1)/(24*3600*1000));
+      },
+
+      inWeeks: function(d1, d2) {
+          var t2 = d2.getTime();
+          var t1 = d1.getTime();
+
+          return parseInt((t2-t1)/(24*3600*1000*7));
+      },
+
+      inMonths: function(d1, d2) {
+          var d1Y = d1.getFullYear();
+          var d2Y = d2.getFullYear();
+          var d1M = d1.getMonth();
+          var d2M = d2.getMonth();
+
+          return (d2M+12*d2Y)-(d1M+12*d1Y);
+      },
+
+      inYears: function(d1, d2) {
+          return d2.getFullYear()-d1.getFullYear();
+      }
+    };
+      let foodToBeNotified = this.state.data.filter(data => {
+          console.log(data);
+          return DateDiff.inDays(new Date(), new Date(data.data.expirationDate)) == 0;
+      }).map(data => data.data.name);
+      await axios.post(Config.CLOUD_FUNCTIONS.TRIGGER_PUSH_URL,
+        {
+          "DATE": Moment(new Date()).add(20,'s').toDate(),
+          "TRIGGER_PAYLOAD":{
+              "messageText":"Following food is close to its expire date: " + JSON.stringify(foodToBeNotified) + ", please consume it"
+          },
+          "ACTION": "push-notifications/send-message"
+      });
+  }
+
+  async deleteFromDb(data) {
+    console.log(data)
+    let response = await axios.post(Config.CLOUD_FUNCTIONS.CLOUDANT_DELETE_URL,
+      {
+          "CLOUDANT_URL":Config.CLOUDANT.CLOUDANT_URL,
+          "CLOUDANT_USERNAME": Config.CLOUDANT.CLOUDANT_USERNAME,
+          "IAM_API_KEY": Config.CLOUDANT.IAM_API_KEY,
+          "DATABASE_NAME":"sample-data",
+          "DOC_ID":data._id,
+          "DOC_REV":data._rev
+      });
+      console.log(response.data);
+  }
+
+  render() {
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    return  (
+      <Container>
+        <Header>
+          <Body>
+            <Title>Your food</Title>
+          </Body>
+        </Header>
+        <Content>
+          <List
+            rightOpenValue={-75}
+            dataSource={ds.cloneWithRows(this.state.data)}
+            renderRow={data =>
+              <ListItem>
+                <Left>
+                  <Thumbnail source={{ uri: data.data.images[0] }} />
+                </Left>
+                <Body>
+                  <Text> {data.data.name} </Text>
+                </Body>
+                <Right>
+                  <Text note>{Moment(data.data.expirationDate).format('DD-MM-YYYY')}</Text>
+                </Right>
+              </ListItem>}
+            renderRightHiddenRow={(data, secId, rowId, rowMap) =>
+              <Button full danger onPress={ async _ => {
+                console.log("Deleting");
+                await this.deleteFromDb(data);
+                this._deleteRow(secId, rowId, rowMap)
+              }}>
+                <Icon active name="trash" />
+              </Button>} />
+      </Content>
+    </Container>);
+  }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
-});

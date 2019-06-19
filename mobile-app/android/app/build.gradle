@@ -8,6 +8,7 @@ buildscript {
     classpath 'io.fabric.tools:gradle:1.26.1'
   }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'devicefarm'
@@ -22,7 +23,7 @@ android {
   defaultConfig {
     applicationId 'org.smartfood'
     minSdkVersion 21
-    targetSdkVersion 26
+    targetSdkVersion 27
     versionCode 1
     versionName '1.0.0'
     ndk {
@@ -104,9 +105,15 @@ apply from: 'expo.gradle'
 // WHEN_PREPARING_SHELL_REMOVE_TO_HERE
 
 dependencies {
+    compile project(':bmd-push-react-native')
+    compile project(':react-native-camera-kit')
   implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+  implementation "com.google.android.gms:play-services-basement:${googlePlayServicesVersion}"
   implementation 'com.android.support:multidex:1.0.1'
+
+  implementation 'com.android.support:appcompat-v7:26.1.0'
+  implementation 'com.android.support:design:26.1.0'
 
   // Our dependencies
   implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -126,12 +133,6 @@ dependencies {
   implementation 'com.amplitude:android-sdk:2.9.2'
 
   implementation 'com.squareup.picasso:picasso:2.5.2'
-  implementation 'com.google.android.gms:play-services-gcm:15.0.1'
-  implementation 'com.google.android.gms:play-services-analytics:16.0.1'
-  implementation 'com.google.android.gms:play-services-maps:15.0.1'
-  implementation 'com.google.android.gms:play-services-auth:15.0.1'
-  implementation 'com.google.android.gms:play-services-location:15.0.1'
-  implementation 'com.google.android.gms:play-services-ads:15.0.1'
   annotationProcessor 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
   implementation "com.raizlabs.android:DBFlow-Core:2.2.1"
   implementation "com.raizlabs.android:DBFlow:2.2.1"
@@ -181,16 +182,16 @@ dependencies {
   testImplementation 'com.android.support.test:runner:1.0.2-alpha1'
   testImplementation 'com.android.support.test:rules:1.0.2-alpha1'
 
-  
+
   implementation('host.exp.exponent:expoview:32.0.0@aar') {
     transitive = true
     exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     exclude group: 'com.squareup.okhttp3', module: 'okhttp-urlconnection'
   }
-  
 
 
-  
+
+
   api 'com.facebook.react:react-native:32.0.0'
   api 'host.exp.exponent:expo-app-loader-provider:1.0.0'
   api 'host.exp.exponent:expo-core:2.0.0'
@@ -232,8 +233,7 @@ dependencies {
   api 'host.exp.exponent:expo-sms:2.0.0'
   api 'host.exp.exponent:expo-background-fetch:1.0.0'
 
-  
+
 }
 
-// This has to be down here for some reason
 apply plugin: 'com.google.gms.google-services'

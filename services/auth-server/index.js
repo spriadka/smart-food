@@ -5,11 +5,13 @@ const session = require('express-session');
 const log4js = require('log4js');
 const passport = require('passport');
 
+const path = require('path');
+
 const URL = require('url').URL;
 
 const appEnv = require('cfenv').getAppEnv({
-  name: 'authserver'//,
-  //vcapFile: path.join(__dirname, 'vcap-local.json')
+  name: 'authserver',
+  vcapFile: path.join(__dirname, 'vcap-local.json')
 });
 
 const health = require('@cloudnative/health-connect');
@@ -71,7 +73,8 @@ app.get(CALL_BACK_URL, passport.authenticate(WebAppStrategy.STRATEGY_NAME));
 const redirectUrl = parseUrl(process.env.REDIRECT_URL);
 
 app.get('/success', (req,res) => {
-  res.redirect(redirectUrl)
+  console.log(req);
+  res.redirect(redirectUrl + '?access_token=' + req.session.APPID_AUTH_CONTEXT.accessToken);
 });
 
 app.use('/health', health.LivenessEndpoint(healthCheck));
