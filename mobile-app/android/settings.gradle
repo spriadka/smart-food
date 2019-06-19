@@ -1,1 +1,5 @@
 include ':app'
+include ':bmd-push-react-native'
+project(':bmd-push-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/bmd-push-react-native/android')
+include ':react-native-camera-kit'
+project(':react-native-camera-kit').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera-kit/android')

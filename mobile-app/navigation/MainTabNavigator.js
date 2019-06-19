@@ -4,8 +4,10 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import ScannFoodScreen from '../screens/ScanFoodScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+
+import Ionicons from '@expo/vector-icons/AntDesign';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -25,36 +27,18 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const ScanFoodStack = createStackNavigator({
+  ScanFood: ScannFoodScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+ScanFoodStack.navigationOptions = {
+  tabBarLabel: 'Scan food',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
-    />
-  ),
-};
-
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
-});
-
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-    />
+   <Ionicons name='qrcode' size={28} />
   ),
 };
 
 export default createBottomTabNavigator({
   HomeStack,
-  LinksStack,
-  SettingsStack,
+  ScanFoodStack
 });

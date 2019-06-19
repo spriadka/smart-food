@@ -25,3 +25,16 @@ ios/xcuserdata
 ios/DerivedData
 *.hmap
 *.ipa
+ios/.DS_Store
+
+# Android
+
+android/.idea
+android/.gradle
+android/app/build
+android/app/app.iml
+android/local.properties
+android/dep
+
+.expo-shared
+config
