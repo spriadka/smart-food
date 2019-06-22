@@ -37,6 +37,7 @@ android/app/build
 android/app/app.iml
 android/local.properties
 android/dep
+android/app/google-services.json
 
 .expo-shared
 config
