@@ -18,7 +18,7 @@
     "appmetrics-prometheus": "^2.0.0",
     "cfenv": "^1.2.2",
     "es7-object-polyfill": "^1.0.0",
-    "express": "^4.17.0",
+    "express": "^4.17.3",
     "express-session": "^1.16.1",
     "ibmcloud-appid": "^6.0.0",
     "log4js": "^4.2.0",
