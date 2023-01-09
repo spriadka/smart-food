@@ -20,7 +20,7 @@
     "es7-object-polyfill": "^1.0.0",
     "express": "^4.17.0",
     "express-session": "^1.16.1",
-    "ibmcloud-appid": "^6.0.0",
+    "ibmcloud-appid": "^6.3.1",
     "log4js": "^4.2.0",
     "passport": "^0.4.0"
   }
